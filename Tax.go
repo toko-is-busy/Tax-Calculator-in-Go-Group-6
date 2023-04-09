@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"image/color"
 	"strconv"
 
 	"fyne.io/fyne/v2/app"
@@ -20,36 +22,23 @@ func main() {
 	salaryEntry := widget.NewEntry()
 	salaryEntry.SetPlaceHolder("Please Type in Your Salary Here")
 
-	resultLabel := widget.NewLabel("")
-
 	calculateButton := widget.NewButton("Calculate", func() {
-		salary, err := strconv.ParseFloat(salaryEntry.Text, 64)
-		if err != nil {
-			fmt.Println("Invalid Input:", err)
-			return
-		}
-
-		sssCon, phCon, piCon, totalCon := computeTotalContributions(salary)
-		taxableIncome := salary - totalCon
-		incomeTax := computeWithholdingTax(taxableIncome)
-		netIncome := computeNetSalary(salary, totalCon, incomeTax)
-
-		output := fmt.Sprintf("Salary: %.2f\n\nSSS: %.2f\nPhilHealth: %.2f\nPag-IBIG: %.2f\nTotal Contributions: %.2f\n\nTaxable Income: %.2f\nIncome Tax: %.2f\n\nNet Income: %.2f\n",
-			salary, sssCon, phCon, piCon, totalCon, taxableIncome, incomeTax, netIncome)
-
-		resultLabel.SetText(output)
+		handleCalculateButtonClick(w, salaryEntry)
 	})
+
+	title := canvas.NewText("Personal Tax Calculator", color.White)
+	title.TextSize = 18
+	title.TextStyle = fyne.TextStyle{Bold: true}
+	title.Alignment = fyne.TextAlignCenter
 
 	content := container.NewPadded(
 		container.NewVBox(
 			layout.NewSpacer(),
-			widget.NewLabelWithStyle("Monthly Salary (Tax) Calculator", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
-			layout.NewSpacer(),
+			container.NewMax(title),
+			widget.NewLabelWithStyle("MONTHLY SALARY**", fyne.TextAlignCenter, fyne.TextStyle{Italic: true}),
 			salaryEntry,
-			layout.NewSpacer(),
 			calculateButton,
 			layout.NewSpacer(),
-			resultLabel,
 			layout.NewSpacer(),
 		),
 	)
@@ -58,6 +47,50 @@ func main() {
 	w.Resize(fyne.NewSize(350, 450))
 	w.SetFixedSize(true)
 	w.ShowAndRun()
+}
+
+func handleCalculateButtonClick(w fyne.Window, salaryEntry *widget.Entry) {
+	salary, err := strconv.ParseFloat(salaryEntry.Text, 64)
+	if err != nil {
+		fmt.Println("Invalid Input:", err)
+		return
+	}
+
+	sssCon, phCon, piCon, totalCon := computeTotalContributions(salary)
+	taxableIncome := salary - totalCon
+	incomeTax := computeWithholdingTax(taxableIncome)
+	netIncome := computeNetSalary(salary, totalCon, incomeTax)
+
+	title := canvas.NewText("Personal Tax Calculator", color.White)
+	title.TextSize = 18
+	title.TextStyle = fyne.TextStyle{Bold: true}
+	title.Alignment = fyne.TextAlignCenter
+
+	resultTable := container.NewGridWithColumns(2,
+		widget.NewLabel("Salary"), widget.NewLabel(fmt.Sprintf("%.2f", salary)),
+		widget.NewLabel("SSS"), widget.NewLabel(fmt.Sprintf("%.2f", sssCon)),
+		widget.NewLabel("PhilHealth"), widget.NewLabel(fmt.Sprintf("%.2f", phCon)),
+		widget.NewLabel("Pag-IBIG"), widget.NewLabel(fmt.Sprintf("%.2f", piCon)),
+		widget.NewLabel("Total Contributions"), widget.NewLabel(fmt.Sprintf("%.2f", totalCon)),
+		widget.NewLabel("Taxable Income"), widget.NewLabel(fmt.Sprintf("%.2f", taxableIncome)),
+		widget.NewLabel("Income Tax"), widget.NewLabel(fmt.Sprintf("%.2f", incomeTax)),
+		widget.NewLabel("Net Income"), widget.NewLabel(fmt.Sprintf("%.2f", netIncome)),
+	)
+
+	w.SetContent(container.NewPadded(
+		container.NewVBox(
+			layout.NewSpacer(),
+			container.NewMax(title),
+			salaryEntry,
+			layout.NewSpacer(),
+			widget.NewButton("Calculate", func() {
+				handleCalculateButtonClick(w, salaryEntry)
+			}),
+			layout.NewSpacer(),
+			resultTable,
+			layout.NewSpacer(),
+		),
+	))
 }
 
 func computeTotalContributions(salary float64) (float64, float64, float64, float64) {

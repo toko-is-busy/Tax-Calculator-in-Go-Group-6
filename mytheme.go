@@ -54,7 +54,7 @@ func (MyTheme) Font(s fyne.TextStyle) fyne.Resource {
 		if s.Italic {
 			return theme.DefaultTheme().Font(s)
 		}
-		return theme.DefaultTheme().Font(s)
+		return fontCooperBlackRegularTtf
 	}
 	if s.Italic {
 		return theme.DefaultTheme().Font(s)

@@ -1,4 +1,4 @@
-module github.com/toko-is-busy/Group-6-S12
+module GO_PROGRAM
 
 go 1.16
 

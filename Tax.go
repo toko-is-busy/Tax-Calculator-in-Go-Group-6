@@ -13,7 +13,8 @@ import (
 
 func main() {
 	a := app.NewWithID("com.example.salarytaxcalculator")
-	a.Settings().SetTheme(theme_gen.MyTheme()) // Use the generated theme
+	customTheme := MyTheme{}
+	a.Settings().SetTheme(customTheme)
 	w := a.NewWindow("Salary Tax Calculator")
 
 	salaryEntry := widget.NewEntry()
@@ -42,7 +43,7 @@ func main() {
 	content := container.NewPadded(
 		container.NewVBox(
 			layout.NewSpacer(),
-			widget.NewLabelWithStyle("Salary Calculator", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
+			widget.NewLabelWithStyle("Monthly Salary (Tax) Calculator", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 			layout.NewSpacer(),
 			salaryEntry,
 			layout.NewSpacer(),
@@ -55,10 +56,9 @@ func main() {
 
 	w.SetContent(content)
 	w.Resize(fyne.NewSize(350, 450))
+	w.SetFixedSize(true)
 	w.ShowAndRun()
 }
-
-// Add your existing functions here.
 
 func computeTotalContributions(salary float64) (float64, float64, float64, float64) {
 	sssContribution := computeSSSContribution(salary)

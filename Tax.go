@@ -248,8 +248,6 @@ func computePAGIBIGContribution(salary float64, empType int) float64 {
 func computeWithholdingTax(salary float64) float64 {
 	incomeRange := []float64{20833, 33333, 66667, 166667, 666667}
 	switch {
-	case salary < incomeRange[0]:
-		return 0
 	case salary >= incomeRange[0] && salary < incomeRange[1]:
 		return (salary - 20833) * 0.2
 	case salary >= incomeRange[1] && salary < incomeRange[2]:

@@ -204,18 +204,27 @@ func getSSSMandatoryProvidentFundRange(empType int) []float64 {
 }
 
 func computePHContribution(salary float64, empType int) float64 {
+  	divisor := 1.0
 	if empType == 0 {
-		return (salary * 0.04) / 2
+      	divisor = 2
 	} else {
-		return salary * 0.04
+		divisor = 1
 	}
-
+  	if salary == 10000 {
+		return 400.00 / divisor
+    	} else if salary > 10000 && salary < 80000 {
+        	return (salary * 0.04) / divisor
+    	} else if salary == 80000 {
+        	return 3200.00 / divisor
+    	} else {
+      		return 0
+    	}
 }
 
 func computePAGIBIGContribution(salary float64, empType int) float64 {
 	contri := 0.0
 	switch {
-	case salary >= 1000 && salary <= 1500:
+	case salary > 0 && salary <= 1500:
 		contri = salary * 0.01
 	case salary > 1500:
 		if salary*0.02 < 100 {

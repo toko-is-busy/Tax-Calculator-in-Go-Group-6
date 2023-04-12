@@ -1,8 +1,8 @@
-********************
+/********************
 Name: DATARIO, AUDREY; DE GRACIA, SHANKY; EDRALIN, PHILIPPE; MENDOZA, ANTONIO
 Language: Go
 Paradigm: multi-paradigm
-********************
+********************/
 
 package main
 
